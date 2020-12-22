@@ -1,400 +1,621 @@
 #include <iostream>
-#include <stdio.h>
-#include <Windows.h>
-#include <stdlib.h>
+#include <time.h>
+#include <ctime>
 #include <conio.h>
-using namespace std; //Объявление библиотек
+#include <windows.h>
+#include <stdlib.h>
 
-//Присваиваем в перечислении буквенный код каждому цвету, чтобы красить консоль.
-enum ConsoleColor {
-	Black = 0,
-	Blue = 1,
-	Green = 2,
-	Cyan = 3,
-	Red = 4,
-	Magenta = 5,
-	Brown = 6,
-	LightGray = 7,
-	DarkGray = 8,
-	LightBlue = 9,
-	LightGreen = 10,
-	LightCyan = 11,
-	LightRed = 12,
-	LightMagenta = 13,
-	Yellow = 14,
-	White = 15
-};
+using namespace std;
 
-//Функция вывода объёма памяти в байтах, занимаемого каждым типом данных.
-void PrintSizeof() {
 
-	const int DataTypeAmount = 12;
+// генерация массива
+void Gen(int* Arr, const int n) {
 
-	COORD position; //инициализируем функцию изменения положения каретки по координатам.
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); //инициализируем функцию окрашивания консоли.
 
-	SetConsoleTextAttribute(hConsole, (WORD)((Magenta << 4) | White)); //красим фон и текст в соотв света.
+	srand(time(0)); //точка отсчёта рандома - системное время
 
-	for (int i = 0; i != DataTypeAmount; i++) {
+	for (int i = 0; i != n; i++) { //генерируем случайный массив
 
-		switch (i) {
-
-		case 0: cout << "int:                " << sizeof(int) << endl; break;
-		case 1: cout << "unsigend int:       " << sizeof(unsigned int) << endl; break;
-		case 2: cout << "short:              " << sizeof(short) << endl; break;
-		case 3: cout << "unsigned short:     " << sizeof(unsigned short) << endl; break;
-		case 4: cout << "long:               " << sizeof(long) << endl; break;
-		case 5: cout << "unsigned long:      " << sizeof(unsigned long) << endl; break;
-		case 6: cout << "float:              " << sizeof(float) << endl; break;
-		case 7: cout << "double:             " << sizeof(double) << endl; break;
-		case 8: cout << "long double:        " << sizeof(long double) << endl; break;
-		case 9: cout << "char:               " << sizeof(char) << endl; break;
-		case 10: cout << "unsigned char:      " << sizeof(unsigned char) << endl; break;
-		case 11: cout << "bool:               " << sizeof(bool) << endl; break;
-		}
+		Arr[i] = rand() % 198 - 99;
 	}
-
-	SetConsoleTextAttribute(hConsole, (WORD)((Black << 4) | White)); //возвращаем цвет к стандартному и делаем рамки таблицы.
-
-	for (int i = 0; i != (DataTypeAmount + 1); i++) {
-
-		position.X = 21;
-		position.Y = i;
-		SetConsoleCursorPosition(hConsole, position);
-		cout << " |";
-	}
-
-	position.X = 0;
-	position.Y = 12;
-	SetConsoleCursorPosition(hConsole, position);
-	cout << "______________________" << endl;
 
 
 }
+
+
+//сортировки
+double* SortT(int* Arr, const int n) {
+
+	int SortArr[100];
+
+	double SortTime[5];
+
+	int Left = 0;
+	int Right = n - 1;
+	bool Flag = true;
+
+	double Factor = 1.2473309;
+	int Step = n - 1;
+
+
+
+	for (int i = 0; i != n; i++) //пузырьковая
+	{
+		SortArr[i] = Arr[i];
+	}
+
+	clock_t t1 = clock();
+	for (int i = 0; i < n; i++) {
+		for (int j = (n - 1); j >= (i + 1); j--) {
+			if (SortArr[j] < SortArr[j - 1]) {
+				swap(SortArr[j], SortArr[j - 1]);
+			}
+		}
+	}
+	clock_t t2 = clock();
+
+	SortTime[0] = (t2 - t1 + .0) / CLOCKS_PER_SEC;
+
+
+	for (int i = 0; i != n; i++) //шейкер
+	{
+		SortArr[i] = Arr[i];
+	}
+
+	t1 = clock();
+	while (Left <= Right && Flag != false)
+	{
+		Flag = false;
+		for (int i = Left; i < Right; i++) {
+
+			if (SortArr[i] > SortArr[i + 1]) {
+
+				swap(SortArr[i], SortArr[i + 1]);
+				Flag = true;
+			}
+		}
+		Right--;
+		for (int i = Right; i > Left; i--) {
+
+			if (SortArr[i - 1] > SortArr[i]) {
+
+				swap(SortArr[i], SortArr[i - 1]);
+				Flag = true;
+			}
+		}
+		Left++;
+	}
+	t2 = clock();
+
+	SortTime[1] = (t2 - t1 + .0) / CLOCKS_PER_SEC;
+
+
+	for (int i = 0; i != n; i++) //расчёска
+	{
+		SortArr[i] = Arr[i];
+	}
+
+	t1 = clock();
+	while (Step >= 1)
+	{
+		for (int i = 0; i + Step < n; i++)
+		{
+			if (SortArr[i] > SortArr[i + Step])
+			{
+				swap(SortArr[i], SortArr[i + Step]);
+			}
+		}
+		Step /= Factor;
+	}
+	t2 = clock();
+
+	SortTime[2] = (t2 - t1 + .0) / CLOCKS_PER_SEC;
+
+
+	for (int i = 0; i != n; i++) //вставками
+	{
+		SortArr[i] = Arr[i];
+	}
+
+	t1 = clock();
+	for (int i = 1; i < n; i++)
+	{
+		for (int j = i; j > 0 && SortArr[j - 1] > SortArr[j]; j--)
+		{
+			swap(SortArr[j], SortArr[j - 1]);
+		}
+	}
+	t2 = clock();
+
+	SortTime[3] = (t2 - t1 + .0) / CLOCKS_PER_SEC;
+
+
+	return SortTime;
+}
+
+
+//рекурсивная qsort
+void qSortT(int* Arr, int n) {
+
+
+
+	int First = 0;
+	int Last = n - 1;
+	int Mid = Arr[n / 2];
+
+	do {
+		while (Arr[First] < Mid) {
+			First++;
+		}
+		while (Arr[Last] > Mid) {
+			Last--;
+		}
+
+		if (First <= Last) {
+			swap(Arr[Last], Arr[First]);
+
+			First++;
+			Last--;
+		}
+	} while (First <= Last);
+
+
+	if (Last > 0) {
+		qSortT(Arr, Last + 1);
+	}
+	if (First < n) {
+		qSortT(&Arr[First], n - First);
+	}
+
+}
+
+
+//вывод массива на экран
+void Print(int* ArrUS, int* Arr, const int n) {
+
+	int Yax = 4;
+
+	system("cls");
+	COORD position;
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	printf("Here is a random-generated massive: \n \n         Unsorted                         Sorted\n_____________________________________________________________\n");
+
+	for (int i = 0; i != n; i++) {
+
+		if (i > 0 && i % 5 == 0) {
+			printf("|\n");
+		}
+		if (ArrUS[i] >= 0) {
+			cout << " ";
+		}
+		if (ArrUS[i] >= 0 && ArrUS[i] < 10) {
+			cout << " ";
+		}
+		if (ArrUS[i] < 0 && ArrUS[i] > -10) {
+			cout << " ";
+		}
+
+
+		cout << ArrUS[i] << "   ";
+	}
+
+
+	position.X = 31;
+	position.Y = Yax;
+	SetConsoleCursorPosition(hConsole, position);
+	Yax++;
+
+	for (int i = 0; i != n; i++) {
+
+		if (i > 0 && i % 5 == 0) {
+			printf("|");
+			position.X = 31;
+			position.Y = Yax;
+			SetConsoleCursorPosition(hConsole, position);
+			Yax++;
+		}
+		if (Arr[i] >= 0) {
+			cout << " ";
+		}
+		if (Arr[i] >= 0 && Arr[i] < 10) {
+			cout << " ";
+		}
+		if (Arr[i] < 0 && Arr[i] > -10) {
+			cout << " ";
+		}
+
+
+		cout << Arr[i] << "   ";
+	}
+
+	position.X = 30;
+	position.Y = 23;
+	SetConsoleCursorPosition(hConsole, position);
+	cout << "|";
+	position.X = 61;
+	position.Y = 23;
+	SetConsoleCursorPosition(hConsole, position);
+	cout << "|";
+	position.X = 0;
+	position.Y = 24;
+	SetConsoleCursorPosition(hConsole, position);
+	cout << "--------------------------------------------------------------\n\n";
+}
+
+
+//поиск минимального и максимального
+void MinMax(int* ArrUS, int* Arr, const int n) {
+	int Min = 100;
+	int Max = -100;
+	int Menu;
+
+again:
+	clock_t t1 = clock();
+	for (int i = 0; i != n; i++) {
+		if (ArrUS[i] < Min) {
+			Min = ArrUS[i];
+		}
+		if (ArrUS[i] > Max) {
+			Max = ArrUS[i];
+		}
+	}
+	clock_t t2 = clock();
+
+	clock_t t3 = clock();
+	for (int i = 0; i != n; i++) { //можно просто Min = Arr[0]; Max = Arr[n-1]; ???
+		if (Arr[i] < Min) {
+			Min = Arr[i];
+		}
+		if (Arr[i] > Max) {
+			Max = Arr[i];
+		}
+	}
+	clock_t t4 = clock();
+
+	system("cls");
+
+	cout << "The Min value is: " << Min << "\nThe Max value is: " << Max << "\n\nIt has taken " << (t2 - t1 + .0) / CLOCKS_PER_SEC << " sec to find it in unsorted array" << "\nIt has taken " << (t4 - t3 + .0) / CLOCKS_PER_SEC << " sec to find it in sorted array\n\nPress 1 to exit\n";
+	cin >> Menu;
+	switch (Menu)
+	{
+	case 1: break;
+	default: printf("\nWrong Symbol! Try again"); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); goto again;
+	}
+}
+
+
+//ищем среднее
+void Avrg(int* Arr, const int n) {
+
+	int counter = 0;
+	int AvrgV = (Arr[0] + Arr[n - 1]) / 2;
+	bool check = false;
+	int Menu;
+	system("cls");
+	cout << "The averege between min and max values is: " << AvrgV;
+
+	for (int i = 0; i != n; i++) {
+		if (AvrgV == Arr[i]) {
+			counter++;
+			check = true;
+		}
+	}
+again:
+	if (check) {
+		cout << "\nThere are " << counter << " equal values in the array\nAnd their indexes are: ";
+		for (int i = 0; i != n; i++) {
+			if (AvrgV == Arr[i]) {
+				cout << i << " ";
+			}
+		}
+	}
+	else {
+		cout << "\nThere are no equal values in the array";
+	}
+
+	cout << "\n\nPress 1 to exit\n";
+
+	cin >> Menu;
+	switch (Menu)
+	{
+	case 1: break;
+	default: printf("\nWrong Symbol! Try again"); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); goto again;
+	}
+}
+
+
+//поиск элементов относительно пользовательских данных
+void ABStuff(int* Arr, const int n) {
+	int a, b;
+	int counterA = 0;
+	int counterB = 0;
+	int Menu;
+again:
+	system("cls");
+	printf("You want to find number of values less than: ");
+	cin >> a;
+	printf("\nYou want to find number of values greater than: ");
+	cin >> b;
+	for (int i = 0; i != n; i++) {
+		if (Arr[i] < a) {
+			counterA++;
+		}
+		if (Arr[i] > b) {
+			counterB++;
+		}
+	}
+	if (counterA == 0) {
+		cout << "\nThere are no values less than " << a;
+	}
+	else {
+		cout << "\nThere are " << counterA << " values less than " << a;
+	}
+	if (counterB == 0) {
+		cout << "\nThere are no values greater than " << b;
+	}
+	else {
+		cout << "\nThere are " << counterB << " values greater than " << b;
+	}
+	counterB = 0;
+	counterA = 0;
+	cout << "\n\nPress 1 to exit\nPress 2 to try again\n";
+
+	cin >> Menu;
+	switch (Menu)
+	{
+	case 1: break;
+	case 2: goto again;
+	default: printf("\nWrong Symbol! Try again"); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); goto again;
+	}
+}
+
+
+//бинарный поиск и поиск перебором
+void Search(int* Arr, const int n) {
+
+	int Num;
+	bool check = false;
+	int index;
+
+
+	int Left = 0;
+	int Right = n - 1;
+	int Mid;
+	bool flag = false;
+
+	int Menu;
+	int Menu2;
+
+	double time1;
+
+	clock_t t1, t2;
+again2:
+	system("cls");
+
+	printf("Enter a number you want to find in the array: ");
+	cin >> Num;
+
+again:
+	printf("Which method do u want to use?\n\nDefault    -- 1\nBinary     -- 2");
+
+	cin >> Menu;
+	switch (Menu) {
+	case 1: { // поиск перебором
+		t1 = clock();
+		for (int i = 0; i != n; i++) {
+			if (Arr[i] == Num) {
+				check = true;
+				index = i;
+			}
+		}
+		t2 = clock();
+		break;
+	}
+
+	case 2: {	// бинарный поиск
+		t1 = clock();
+		while ((flag != true) && (Left <= Right)) {
+			Mid = (Left + Right) / 2;
+
+			if (Num > Arr[Mid]) {
+				Left = Mid + 1;
+			}
+			else if (Num < Arr[Mid]) {
+				Right = Mid - 1;
+			}
+			else {
+				check = true;
+				index = Mid;
+				flag = true;
+			}
+		}
+		t2 = clock();
+		break;
+	}
+	default: printf("\nWrong Symbol! Try again"); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); goto again;
+
+	}
+	if (check) {
+		cout << "\n\nThe array include your number " << Num << ". And it's index is " << index;
+		check = false;
+	}
+	else {
+		cout << "\n\nThe array does not include your number " << Num;
+	}
+
+	cout << "\n\nIt has taken " << (t2 - t1 + .0) / CLOCKS_PER_SEC << " sec to find it out";
+
+	cout << "\n\nPress 1 to exit\nPress 2 to try again\n";
+
+	cin >> Menu2;
+	switch (Menu2)
+	{
+	case 1: break;
+	case 2: goto again2;
+	default: printf("\nWrong Symbol! Try again"); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); goto again;
+	}
+}
+
+
+//обмен
+void Exchange(int* Arr, const int n) {
+	int index1, index2;
+
+	int Menu;
+	int NewArr[100];
+
+	int counter[9];
+
+
+again:
+
+	for (int i = 0; i != 9; i++) {
+		counter[i] = 0;
+	}
+
+	for (int i = 0; i != n; i++) {
+		NewArr[i] = Arr[i];
+	}
+
+	system("cls");
+
+	printf("Exchange 2 numbers                         -- 1\nSum every current and next value           -- 2\nMix every number                           -- 3\nAmount of elements that can be divided     -- 4\nExit        -- 5\n");
+
+	cin >> Menu;
+
+	switch (Menu)
+	{
+	case 1:
+
+		system("cls");
+		printf("Enter 2 indexes of a numbers you  want to exchange: ");
+		cin >> index1 >> index2;
+
+		swap(Arr[index1], Arr[index2]);
+		break;
+
+	case 2:
+
+		for (int i = 0; i != (n - 1); i++) {
+			Arr[i] = NewArr[i] + NewArr[i + 1];
+		}
+		Arr[n - 1] = NewArr[n - 1] + NewArr[0];
+		break;
+
+	case 3:
+
+		srand(time(0));
+		for (int i = 0; i != n; i++) {
+			Arr[i] = NewArr[0 + rand() % 99];
+		}
+
+		break;
+
+	case 4:
+		for (int i = 0; i != n; i++) {
+			if (NewArr[i] % 1 == 0) {
+				counter[0]++;
+			}
+			if (NewArr[i] % 2 == 0) {
+				counter[1]++;
+			}
+			if (NewArr[i] % 3 == 0) {
+				counter[2]++;
+			}
+			if (NewArr[i] % 4 == 0) {
+				counter[3]++;
+			}
+			if (NewArr[i] % 5 == 0) {
+				counter[4]++;
+			}
+			if (NewArr[i] % 6 == 0) {
+				counter[5]++;
+			}
+			if (NewArr[i] % 7 == 0) {
+				counter[6]++;
+			}
+			if (NewArr[i] % 8 == 0) {
+				counter[7]++;
+			}
+			if (NewArr[i] % 9 == 0) {
+				counter[8]++;
+			}
+		}
+		system("cls");
+		for (int i = 0; i != 9; i++) {
+			cout << "There are " << counter[i] << " values that can be devided by " << i + 1 << endl;
+		}
+		printf("\nPress any key to return to main menu\n");
+		system("pause");
+		break;
+	case 5: break;
+	default: printf("\nWrong Symbol! Try again"); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); goto again;  break;
+
+	}
+}
+
+
 
 
 int main() {
 
-	int Action, SubAction; //внутренние переменные для операторов switch
-	int joker = 0; //счётчик неправильных действий в меню
+	const int n = 100;
+	int Arr[n];
+	int ArrUS[n];
+	double* SortTime;
 
-	int value_int; //значение инт
+	int Menu;
 
-	union { //значение флоат. Битовые сдвиги будем совершать через int переменную в одном union. 
-		float value_float;
-		int float_tool;
-	};
 
-	union { //значение дабл. Битовые сдвиги будем совершать через две int переменные объединённые в массив в одном union.
-		double value_double;
-		int double_tool[2]; //объявляем массив длинной в 2 инт переменные (4+4 = 8 байт)
-	};
 
-	unsigned int order = 32; //количество разрядов.
-	unsigned int mask = 1 << (order - 1); //маска побитового сравнения.
+reg:
 
-	int intArr[32];
-	int floatArr[32];
-	int doubleArr[64];
-	int changeNum = 0;
-	bool check = true;
+	Gen(Arr, n);
 
-restart: //точка возврата в главное меню.
-
-	system("cls"); //очистка консоли
-
-	PrintSizeof(); //вызываем функцию описанную ранее
-
-	printf("The amount of an occupated memory for each of data types is displayed upwards.\n\nWhat would you like to do?\n\nDisplay the binary representation of an integer           --  1\nDisplay the binary representation of a float type         --  2\nDisplay the binary representation of a double float type  --  3\n\nExit  --  4\n");
-
-	cin >> Action; //переменная для выбора пункта меню
-
-	switch (Action) {
-	case 1:
-	return1: //точка возврата для повторного ввода.
-		system("cls");
-
-		printf("Enter the integer value that you wanna represent.\n");
-		cin >> value_int; //получаем int для бинарного предстваления.
-
-
-
-
-		for (int i = 0; i != order; i++) // записываем побитовое представление в массив
-		{
-			if (value_int & mask)
-			{
-				intArr[i] = 1;
-			}
-			else {
-				intArr[i] = 0;
-			}
-			value_int <<= 1;
-		}
-
-	ret1:
-		system("cls");
-		cout << "Here is binary representation of an integer number " << value_int << "\n\n";
-
-		for (int i = 1; i != 33; i++) {
-			cout << intArr[i - 1];
-			if (i % 8 == 0) //определяем места для пробелов
-			{
-				printf(" ");
-			}
-			if (i % order - 1 == 0)
-			{
-				printf(" ");
-			}
-
-		}
-
-
-
-
-		printf("\n\nTry another number    --  1\nChange some bits      -- 2\nExit to main menu     --  Any\n");
-		cin >> SubAction; //вывод побочного меню и выбор пункта
-
-		switch (SubAction) {
-		case 1:
-
-			goto return1;
-			break;
-
-		case 2:
-			printf("Enter a number of bit u wanna change: ");
-
-			cin >> changeNum;
-			if (changeNum < 33 && changeNum > 0) {
-				if (intArr[changeNum - 1] == 1) {
-					intArr[changeNum - 1] = 0;
-				}
-				else {
-					intArr[changeNum - 1] = 1;
-				}
-				goto ret1;
-				break;
-			}
-			else {
-				printf("\n\nThere are no bits in this position");
-				Sleep(1500);
-				goto ret1;
-				break;
-			}
-
-		default:
-
-			goto restart;
-			break;
-
-		}
-
-		joker = 0; // обнуление счётчика неправильных вводов
-		break;
-	case 2:
-
-	return2: //маркер возврата
-		system("cls");
-
-		printf("Enter the float value that you wanna represent.\n");
-		cin >> value_float; //получаем исконное значение от пользователя
-
-		for (int i = 0; i != order; i++)
-		{
-			if (float_tool & mask)
-			{
-				floatArr[i] = 1;
-			}
-			else {
-				floatArr[i] = 0;
-			}
-			float_tool <<= 1;
-		}
-
-	ret2:
-
-		system("cls");
-
-		cout << "Here is binary representation of a float number " << value_float << "\n\n";
-
-		for (int i = 1; i != 33; i++)
-		{
-			cout << floatArr[i - 1];
-
-			if (i % 8 == 0)
-			{
-				printf(" ");
-			}
-			if (i % order - 1 == 0)
-			{
-				printf(" ");
-			}
-		}
-
-		printf("\n\nTry another number    --  1\nChange some bits      -- 2\nExit to main menu     --  Any\n");
-		cin >> SubAction;
-
-		switch (SubAction) {
-		case 1:
-
-			goto return2;
-			break;
-		case 2:
-			printf("Enter a number of bit u wanna change: ");
-
-			cin >> changeNum;
-			if (changeNum < 33 && changeNum > 0) {
-				if (floatArr[changeNum - 1] == 1) {
-					floatArr[changeNum - 1] = 0;
-				}
-				else {
-					floatArr[changeNum - 1] = 1;
-				}
-				goto ret2;
-				break;
-			}
-			else {
-				printf("\n\nThere are no bits in this position");
-				Sleep(1500);
-				goto ret2;
-				break;
-			}
-		default:
-
-			goto restart;
-			break;
-
-		}
-
-		joker = 0;
-		break;
-	case 3:
-
-	return3:
-		system("cls");
-
-		printf("Enter the double float value that you wanna represent.\n");
-		cin >> value_double;
-
-		for (int i = 0; i != order; i++) // записываем первые 32 бита
-		{
-			if (double_tool[0] & mask)
-			{
-				doubleArr[i] = 1;
-			}
-			else {
-				doubleArr[i] = 0;
-			}
-			double_tool[0] <<= 1;
-		}
-		for (int i = 32; i != 64; i++) // записываем остальные 32 бита
-		{
-			if (double_tool[1] & mask)
-			{
-				doubleArr[i] = 1;
-			}
-			else {
-				doubleArr[i] = 0;
-			}
-			double_tool[1] <<= 1;
-		}
-
-	ret3:
-
-		system("cls");
-
-		cout << "Here is binary representation of a double float number " << value_double << "\n\n";
-
-		for (int i = 1; i != 65; i++) // выводим битовое представление числа
-		{
-			cout << doubleArr[i - 1];
-
-			if (i % 8 == 0)
-			{
-				printf(" ");
-			}
-			if (i % order - 1 == 0 && check)
-			{
-				printf(" ");
-				check = false; // отвечает за то, что бы пробел после знакового бита ставился корректно ( 1 раз )
-			}
-		}
-		check = true;
-		printf("\n\nTry another number    --  1\nChange some bits      -- 2\nExit to main menu     --  Any\n");
-		cin >> SubAction;
-
-		switch (SubAction) {
-		case 1:
-
-			goto return3;
-			break;
-		case 2:
-			printf("Enter a number of bit u wanna change: ");
-
-			cin >> changeNum;
-			if (changeNum < 65 && changeNum > 0) {
-				if (doubleArr[changeNum - 1] == 1) {
-					doubleArr[changeNum - 1] = 0;
-				}
-				else {
-					doubleArr[changeNum - 1] = 1;
-				}
-				goto ret3;
-				break;
-			}
-			else {
-				printf("\n\nThere are no bits in this position");
-				Sleep(1500);
-				goto ret2;
-				break;
-			}
-
-
-		default:
-
-			goto restart;
-			break;
-
-		}
-
-
-		joker = 0;
-		break;
-	case 4:
-		exit(0); //выход из программы.
-		break;
-
-	default:
-		if (joker < 3) { //проверяем, сколько раз было введено неправильное значение.
-			printf("\nWrong symbol. Try again."); //вывод сообщения об ошибке.
-			Sleep(1000);
-			printf(".");
-			Sleep(1000);
-			printf(".");
-			Sleep(1000);
-			printf(".");
-			Sleep(500);
-
-			++joker; //инкремент счётчика неправильных вводов.
-		}
-		else {
-			printf("\n?)\naM i A jOkE tO YoU??? THAT's a WRONG symbol.\nTry again."); //альтернативная ошибка
-			Sleep(1000);
-			printf(".");
-			Sleep(1000);
-			printf(".");
-			Sleep(1000);
-			printf(".");
-			Sleep(3000);
-
-			joker = 0; //обнуляем счётчик неправильных символов.
-		}
-		break;
+	for (int i = 0; i != n; i++) {
+		ArrUS[i] = Arr[i];
 	}
 
 
-	system("cls");
-	goto restart;
+	SortT(Arr, n);
+	clock_t t1 = clock();
+	qSortT(Arr, n);
+	clock_t t2 = clock();
+again:
+	Print(ArrUS, Arr, n);
 
+
+
+
+
+
+	SortTime = SortT(Arr, n);
+	SortTime[4] = (t2 - t1 + .0) / CLOCKS_PER_SEC;
+
+
+
+
+	cout << "Time taken for...\nBubble sort: " << SortTime[0] << " sec\nShaker sort: " << SortTime[1] << " sec\nComb sort: " << SortTime[2] << " sec\nInsert sort: " << SortTime[3] << " sec\nQuick sort: " << SortTime[4] << " sec\n\n\n";
+	printf("Menu:\n\nMin and Max value                  -- 1\nAvrg value                         -- 2\nThe A and B stuff                  -- 3\nFind your number in the array      -- 4\nExchange numbers                   -- 5\nRegenerate                         -- 6\nExit                               -- 7\n");
+
+	cin >> Menu;
+
+	switch (Menu) {
+	case 1: MinMax(ArrUS, Arr, n); goto again;
+	case 2: Avrg(Arr, n);  goto again;
+	case 3: ABStuff(Arr, n);  goto again;
+	case 4: Search(Arr, n); goto again;
+	case 5: Exchange(Arr, n); goto again;
+	case 6: goto reg;
+	case 7: goto stop;
+	default: printf("\nWrong Symbol! Try again"); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); printf("."); Sleep(1000); goto again;
+	}
+
+
+
+
+stop:
 	return 0;
 }
+
