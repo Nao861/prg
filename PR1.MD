@@ -22,6 +22,10 @@
 <html>
 <img src="https://sun9-31.userapi.com/impg/4dpwDDDCa59erMotYLyo7rE-txq3JEbChBruSw/Q6KPmWuwhxU.jpg?size=969x470&quality=96&proxy=1&sign=209754747b6923681d1596c4bcbaec9a&type=album">
 </html>  
+4 - Бинарное представление числа типа "double float"  
+<html>
+<img src="https://sun9-75.userapi.com/impg/o6k6gnc8X7Nl0-aPAGa1qP7Zv6SdUcYJzLRhTw/RqK49BkZhUg.jpg?size=968x486&quality=96&proxy=1&sign=f7d83332be13b8868b89d9a8e450f871&type=album">
+</html>  
 Моим дополнительным заданием было :
 Добавить возможность изменить произвольные биты на 1 и 0 по указанию пользователя ( номер бита и значения вводятся с клавиатуры ) для всех затронутых типов данных.
 
