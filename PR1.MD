@@ -17,7 +17,11 @@
 2 - Бинарное представление числа типа "integer"  
 <html>
 <img src="https://sun9-5.userapi.com/impg/Zb5xLwL_62A9RN3zJMFm8F8etiCW9FU6lul6Ug/j52evMNLod4.jpg?size=888x372&quality=96&proxy=1&sign=27f7abbd42b404dc79c360b8ba8173aa&type=album">
-</html>
+</html>  
+3 - Бинарное представление числа типа "float"  
+<html>
+<img src="https://sun9-31.userapi.com/impg/4dpwDDDCa59erMotYLyo7rE-txq3JEbChBruSw/Q6KPmWuwhxU.jpg?size=969x470&quality=96&proxy=1&sign=209754747b6923681d1596c4bcbaec9a&type=album">
+</html>  
 Моим дополнительным заданием было :
 Добавить возможность изменить произвольные биты на 1 и 0 по указанию пользователя ( номер бита и значения вводятся с клавиатуры ) для всех затронутых типов данных.
 
