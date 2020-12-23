@@ -12,8 +12,8 @@
 ## В своей работе я реализовал это так :  
 1 - Интерфейс меню
 <html>
-  <img src="https://sun9-36.userapi.com/impg/RAqq1iRPQCyRd6uiBTmNDs2iwGcJWj2f1g-noA/3i5CwY9p-co.jpg?size=993x492&quality=96&proxy=1&sign=d492b25eaa7ce3335949ad4a3edc0b17&type=album>
-  </html>
+<img src="https://sun9-36.userapi.com/impg/RAqq1iRPQCyRd6uiBTmNDs2iwGcJWj2f1g-noA/3i5CwY9p-co.jpg?size=993x492&quality=96&proxy=1&sign=d492b25eaa7ce3335949ad4a3edc0b17&type=album">
+</html>
 Моим дополнительным заданием было :
 Добавить возможность изменить произвольные биты на 1 и 0 по указанию пользователя ( номер бита и значения вводятся с клавиатуры ) для всех затронутых типов данных.
 
